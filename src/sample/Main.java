@@ -15,11 +15,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.TilePane;
 import javafx.scene.text.*;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import java.io.File;
+
 public class Main extends Application {
+
+    public Stage uiStage;
+
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -48,7 +54,13 @@ public class Main extends Application {
         openProjectbtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                try{
 
+                    createUi();
+                    primaryStage.hide();
+                }catch(Exception e){
+                    System.out.println("Error: " + e);
+                }
             }
         });
 
@@ -57,6 +69,7 @@ public class Main extends Application {
             public void handle(ActionEvent actionEvent) {
                 try{
                     NewProject();
+
                 }catch(Exception e){
                     System.out.println("Error: " + e);
                 }
@@ -84,10 +97,34 @@ public class Main extends Application {
         newProjectPopUp.setScene(new Scene(root, 300, 275));
         newProjectPopUp.show();
     }
-    public static void CreateProjectButtonPress(String FileName){
-        
+    public static void CreateProjectButtonPress(String fileName,Window owner){
+        try{
+            File currentFIle = new File(fileName);
+            if(currentFIle.createNewFile()){
+                Alerts.showAlerts(Alert.AlertType.CONFIRMATION,owner , "Created","Made File: " + fileName );
+
+            }else{
+                Alerts.showAlerts(Alert.AlertType.ERROR,owner , "Error","File already Exists: " + fileName );
+            }
+        }catch(Exception e){
+            System.out.println("Error: " + e);
+        }
+
+    }
+    public Stage createUi() throws Exception{
+        Stage uiStage = new Stage();
+        Parent root = FXMLLoader.load(getClass().getResource("projectManagerUI.fxml"));
+        uiStage.setTitle("ProjectManager0.1");
+        uiStage.setScene(new Scene(root, 500 ,400 ));
+        uiStage.show();
+        return(uiStage);
     }
 
+    public static void addTask(Accordion contentArea, String taskName){
+        TitledPane task = new TitledPane();
+        task.setText(taskName);
+        contentArea.getPanes().add(task);
+    }
 
 
     public static void main(String[] args) {
